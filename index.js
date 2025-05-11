@@ -2,7 +2,24 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const Sequelize = require('sequelize');
+const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
+
 const app = express();
+
+
+app.use(session({
+  store: new SQLiteStore({
+    db: 'sessions.sqlite',
+    dir: './Database'
+  }),
+  secret: 'mySuperSecretKey',
+   resave: true,       // ✔ ต่ออายุ session ทุก request
+  saveUninitialized: false,
+  rolling: true,      // ✔ ต่ออายุ cookie ทุก request
+  cookie: { maxAge: 15 * 60 * 1000 } // หมดอายุถ้าไม่มีการใช้งาน 15 นาที
+}));
+
 
 app.use(express.json());
 
